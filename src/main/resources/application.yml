@@ -1,0 +1,108 @@
+spring:
+  config:
+    # Secrets live in ./.env (gitignored), one KEY=value per line. See .env.example.
+    import: "optional:file:.env[.properties]"
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 5
+      connection-timeout: 30000      # Neon can take a few seconds to wake up
+      max-lifetime: 240000           # below Neon's idle-connection timeout
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update               # creates/extends the jobs and ingest_runs tables
+    properties:
+      hibernate:
+        jdbc.batch_size: 100
+        order_inserts: true
+        order_updates: true
+  jackson:
+    property-naming-strategy: SNAKE_CASE   # the dashboard speaks snake_case
+    default-property-inclusion: always
+
+server:
+  port: ${PORT:8000}                 # same port the Python API used, so the web app needs no change
+  error:
+    include-message: always
+
+jobhunt:
+  companies-file: ${COMPANIES_FILE:companies.yaml}
+  adzuna:
+    app-id: ${ADZUNA_APP_ID:}
+    app-key: ${ADZUNA_APP_KEY:}
+    places: [Delhi, Noida, Gurgaon, Bangalore, Hyderabad, Pune, Mumbai, Chennai, Kolkata, Ahmedabad]
+  search:
+    max-experience-years: 2          # internship / fresher / up to 2 years
+    max-results: 3000
+    india-wide: true                 # false = only the cities listed below
+  ingest:
+    run-at: "10:00"                  # local time in `timezone`
+    timezone: Asia/Kolkata
+    lookback-days: 7                 # first run (or after a gap) stores this many days
+    retention-days: 15               # older jobs are deleted
+    max-gap-hours: 48
+    fetch-workers: 16
+    refresh-cooldown-seconds: 120
+
+  cities:
+    - {name: Delhi,         aliases: [delhi, new delhi, ncr, delhi ncr, nct]}
+    - {name: Noida,         aliases: [noida, greater noida]}
+    - {name: Gurugram,      aliases: [gurugram, gurgaon]}
+    - {name: Faridabad,     aliases: [faridabad]}
+    - {name: Ghaziabad,     aliases: [ghaziabad]}
+    - {name: Bengaluru,     aliases: [bengaluru, bangalore, bengalooru]}
+    - {name: Hyderabad,     aliases: [hyderabad, secunderabad, hitech city, hyd]}
+    - {name: Pune,          aliases: [pune, pimpri, chinchwad, hinjewadi]}
+    - {name: Mumbai,        aliases: [mumbai, navi mumbai, thane, bombay, powai]}
+    - {name: Chennai,       aliases: [chennai, madras]}
+    - {name: Kolkata,       aliases: [kolkata, calcutta, salt lake]}
+    - {name: Ahmedabad,     aliases: [ahmedabad, gandhinagar]}
+    - {name: Jaipur,        aliases: [jaipur]}
+    - {name: Chandigarh,    aliases: [chandigarh, mohali, panchkula, zirakpur]}
+    - {name: Lucknow,       aliases: [lucknow]}
+    - {name: Indore,        aliases: [indore]}
+    - {name: Kochi,         aliases: [kochi, cochin, ernakulam, kakkanad]}
+    - {name: Thiruvananthapuram, aliases: [thiruvananthapuram, trivandrum, technopark]}
+    - {name: Coimbatore,    aliases: [coimbatore]}
+    - {name: Nagpur,        aliases: [nagpur]}
+    - {name: Bhubaneswar,   aliases: [bhubaneswar]}
+    - {name: Vadodara,      aliases: [vadodara, baroda]}
+    - {name: Surat,         aliases: [surat]}
+    - {name: Visakhapatnam, aliases: [visakhapatnam, vizag]}
+    - {name: Mysuru,        aliases: [mysuru, mysore]}
+    - {name: Mangaluru,     aliases: [mangaluru, mangalore]}
+
+  # Titles matching any of these are too senior and are dropped (case-insensitive regex).
+  exclude-titles:
+    - '\b(senior|sr|staff|principal|distinguished|fellow|architect|lead|leader)\b'
+    - '\b(engineer|sde|developer|swe|analyst|executive|associate)\s*-?\s*(iii|iv|v|3|4|5)\b'
+    - '\b(director|vp|avp|svp|vice president|head of|head -|chief|cto|cfo|coo|ceo|gm|dgm|agm)\b'
+    - '\b(manager|management|managing)\b'
+    - '\b(consultant|partner|president)\b'
+
+  # First match wins, top to bottom. Unmatched titles become "Other".
+  categories:
+    - {name: Flutter & Mobile,       pattern: 'flutter|android|\bios\b|mobile|react native|swift|kotlin'}
+    - {name: Frontend,               pattern: 'front[- ]?end|\breact\b|angular|\bvue\b|ui developer|web developer|javascript|typescript'}
+    - {name: Full Stack,             pattern: 'full[- ]?stack|mern|mean stack'}
+    - {name: Backend,                pattern: 'back[- ]?end|\bjava\b|python|node|golang|\bgo developer|\.net|\bphp\b|\bapi\b|django|spring|ruby|laravel'}
+    - {name: DevOps & Cloud,         pattern: 'devops|\bsre\b|site reliability|cloud|kubernetes|infrastructure|\binfra\b|sysadmin|system admin|\baws\b|\bazure\b'}
+    - {name: Cybersecurity,          pattern: 'security|cyber|infosec|\bsoc\b|\bvapt\b|pentest|penetration|\bgrc\b'}
+    - {name: Networking,             pattern: 'network|\bnoc\b|telecom|\bwifi\b|firewall|\bccna\b|\brf\b'}
+    - {name: QA & Testing,           pattern: '\bqa\b|quality assurance|\btest(er|ing)?\b|sdet|automation test'}
+    - {name: Data Entry & Back Office, pattern: 'data entry|back[- ]?office|\bmis\b|typist|documentation|data operator|computer operator'}
+    - {name: Data & AI,              pattern: 'data|machine learning|\bml\b|\bai\b|\bnlp\b|analytics|\bbi\b|business intelligence|research'}
+    - {name: Customer Support,       pattern: 'support|customer (success|service|care|experience|relations)|help ?desk|call cent|telecaller|voice process|bpo|chat process|service desk'}
+    - {name: Sales & Business Development, pattern: 'sales|business development|\bbdm?\b|\bbde\b|inside sales|account executive|relationship|territory|telesales|lead gen|field executive|growth'}
+    - {name: Accounts & Finance,     pattern: 'account|finance|financial|audit|\btax\b|payroll|billing|\bgst\b|treasury|collections|credit|banking|invoice|bookkeep|\bcma?\b|\bca\b'}
+    - {name: HR & Recruitment,       pattern: '\bhr\b|human resource|recruit|talent|people|payroll|onboarding'}
+    - {name: Marketing & Content,    pattern: 'marketing|\bseo\b|content|social media|brand|copywrit|\bpr\b|communications|influencer|community|writer|editor'}
+    - {name: Design & Creative,      pattern: 'design|\bux\b|\bui\b|graphic|creative|video|animat|photograph|illustrat'}
+    - {name: Operations & Logistics, pattern: 'operations?|logistic|supply chain|warehouse|procurement|vendor|fleet|dispatch|delivery|inventory|store|purchase|sourcing|quality control|production|plant'}
+    - {name: Product & Project,      pattern: 'product|project|program|scrum|business analyst|coordinator'}
+    - {name: Legal & Compliance,     pattern: 'legal|compliance|paralegal|company secretary|\bcs\b|regulatory|advocate'}
+    - {name: Admin & Office,         pattern: 'admin|receptionist|office|executive assistant|secretary|front desk|hospitality'}
+    - {name: Software Engineering,   pattern: 'software|\bsde\b|\bswe\b|developer|programmer|engineer'}

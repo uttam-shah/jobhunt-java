@@ -1,0 +1,650 @@
+# Boards to poll. One entry per company.
+#
+#   ats:   greenhouse | lever | ashby
+#   slug:  the company's board identifier (NOT its domain)
+#   name:  whatever you want to see in the digest
+#
+# The slug is the last path segment of the company's public careers board:
+#   https://boards.greenhouse.io/<slug>        -> ats: greenhouse
+#   https://jobs.lever.co/<slug>               -> ats: lever
+#   https://jobs.ashbyhq.com/<slug>            -> ats: ashby
+#
+# THESE ARE EXAMPLES — verify each one before you trust the output. Companies
+# migrate between ATS vendors and slugs go dead. Check a slug in your browser:
+#   https://boards-api.greenhouse.io/v1/boards/<slug>/jobs?content=true
+#   https://api.lever.co/v0/postings/<slug>?mode=json
+#   https://api.ashbyhq.com/posting-api/job-board/<slug>?includeCompensation=true
+#
+# A dead slug is not fatal: fetch_board prints the HTTP status and returns [],
+# so one bad entry never takes down the run. Watch the per-board job counts on
+# stdout — a board reporting 0 jobs every day is a slug that needs fixing.
+#
+# Start with 10-15 companies you would actually join. A list of 200 is mostly
+# noise and makes the prefilter counts impossible to reason about.
+
+# companies:
+#   - {ats: greenhouse, slug: stripe,      name: Stripe}
+#   - {ats: greenhouse, slug: databricks,  name: Databricks}
+#   - {ats: greenhouse, slug: cloudflare,  name: Cloudflare}
+#   - {ats: greenhouse, slug: figma,       name: Figma}
+#   - {ats: greenhouse, slug: dropbox,     name: Dropbox}
+#   - {ats: greenhouse, slug: coinbase,    name: Coinbase}
+#   - {ats: greenhouse, slug: reddit,      name: Reddit}
+#   - {ats: lever,      slug: voleon,      name: Voleon}
+
+#   - {ats: ashby,      slug: openai,      name: OpenAI}
+#   - {ats: ashby,      slug: ramp,        name: Ramp}
+#   - {ats: ashby,      slug: linear,      name: Linear}
+#   - {ats: ashby,      slug: vanta,       name: Vanta}
+
+companies:
+- {ats: lever, slug: safe, name: Safe Security}
+- {ats: lever, slug: drivetrain, name: Drivetrain}
+- {ats: lever, slug: ion, name: ION Group}
+- {ats: lever, slug: cin7, name: Cin7}
+- {ats: lever, slug: foxitsoftware, name: Foxit}
+- {ats: lever, slug: acceldata, name: Acceldata}
+- {ats: lever, slug: Sprinto, name: Sprinto}
+- {ats: lever, slug: saviynt, name: Saviynt}
+- {ats: lever, slug: neuron7, name: Neuron7}
+- {ats: lever, slug: kobie, name: Kobie Marketing}
+- {ats: lever, slug: hevodata, name: Hevo Data}
+
+- {ats: ashby, slug: aiprise, name: AiPrise}
+- {ats: ashby, slug: firstwork, name: FirstWork}
+- {ats: ashby, slug: commure, name: Commure}
+- {ats: ashby, slug: ema, name: Ema}
+
+- {ats: greenhouse, slug: pay2dc, name: PayPay India}
+- {ats: greenhouse, slug: sumologic, name: Sumo Logic}
+- {ats: greenhouse, slug: bitwarden, name: Bitwarden}
+- {ats: greenhouse, slug: gravitonresearchcapital, name: Graviton Research Capital}
+- {ats: greenhouse, slug: zinnia, name: Zinnia}
+- {ats: greenhouse, slug: inizio, name: Inizio}
+- {ats: greenhouse, slug: Simpplr, name: Simpplr}
+- {ats: greenhouse, slug: shubhashrayhousingcareers, name: Shubhashray Housing India}
+- {ats: greenhouse, slug: insurityindia, name: Insurity}
+
+- {ats: lever, slug: meesho, name: Meesho}
+- {ats: lever, slug: paytm, name: Paytm}
+- {ats: lever, slug: anaplan, name: Anaplan}
+- {ats: lever, slug: paytmpayments, name: Paytm Payments Services}
+- {ats: lever, slug: shyftlabs, name: ShyftLabs}
+
+- {ats: ashby, slug: level-ai, name: Level AI}
+- {ats: ashby, slug: openai, name: OpenAI}
+
+- {ats: workday, slug: diageo, name: Diageo, host: diageo.wd3.myworkdayjobs.com, site: Diageo_Careers}
+- {ats: workday, slug: stryker, name: Stryker, host: stryker.wd1.myworkdayjobs.com, site: StrykerCareers}
+- {ats: workday, slug: rockwellautomation, name: "Rockwell Automation", host: rockwellautomation.wd1.myworkdayjobs.com, site: External_Rockwell_Automation}
+- {ats: workday, slug: blackrock, name: BlackRock, host: blackrock.wd1.myworkdayjobs.com, site: BlackRock_Professional}
+- {ats: workday, slug: cengage, name: Cengage, host: cengage.wd5.myworkdayjobs.com, site: CengageEMEACareers}
+- {ats: workday, slug: clarivate, name: Clarivate, host: clarivate.wd3.myworkdayjobs.com, site: Clarivate_Careers}
+- {ats: workday, slug: axalta, name: Axalta, host: axalta.wd1.myworkdayjobs.com, site: axalta}
+- {ats: workday, slug: cognex, name: Cognex, host: cognex.wd1.myworkdayjobs.com, site: External_Career_Site}
+- {ats: workday, slug: kyndryl, name: Kyndryl, host: kyndryl.wd5.myworkdayjobs.com, site: KyndrylEarlyCareers}
+- {ats: workday, slug: jj, name: "Johnson & Johnson", host: jj.wd5.myworkdayjobs.com, site: jj}
+- {ats: workday, slug: agilent, name: "Agilent Technologies", host: agilent.wd5.myworkdayjobs.com, site: Agilent_Careers}
+- {ats: workday, slug: mksinst, name: "MKS Instruments", host: mksinst.wd1.myworkdayjobs.com, site: MKSCareersAmericas}
+
+- {ats: oracle_recruiting_cloud, slug: null, name: EXL, careers_url: "https://fa-ewjt-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2/jobs"}
+- {ats: oracle_recruiting_cloud, slug: null, name: GEDU Global Education, careers_url: "https://geduglobal-iabmbn.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1"}
+
+- {ats: smartrecruiters, slug: BoschGroup, name: Bosch}
+- {ats: smartrecruiters, slug: AccorHotel, name: Accor}
+
+
+
+# Maharast
+
+- {ats: workday, slug: abbottcareers, name: Abbott, host: abbott.wd5.myworkdayjobs.com, site: abbottcareers, city: Mumbai}
+- {ats: workday, slug: Careers, name: Accelya, host: accelya.wd103.myworkdayjobs.com, site: Careers, city: "Mumbai/Pune"}
+- {ats: workday, slug: Alfa_Laval_jobs, name: "Alfa Laval", host: alfalaval.wd3.myworkdayjobs.com, site: Alfa_Laval_jobs, city: Pune}
+- {ats: workday, slug: allstate_careers, name: Allstate, host: allstate.wd5.myworkdayjobs.com, site: allstate_careers, city: Pune}
+- {ats: workday, slug: BakerHughes, name: "Baker Hughes", host: bakerhughes.wd5.myworkdayjobs.com, site: BakerHughes, city: "Mumbai/Pune"}
+- {ats: workday, slug: External_Career_Site_Barclays, name: Barclays, host: barclays.wd3.myworkdayjobs.com, site: External_Career_Site_Barclays, city: "Mumbai/Pune"}
+- {ats: workday, slug: bentley, name: "Bentley Systems", host: bentleysystems.wd5.myworkdayjobs.com, site: bentley, city: Pune}
+- {ats: workday, slug: BlackRock_Professional, name: BlackRock, host: blackrock.wd1.myworkdayjobs.com, site: BlackRock_Professional, city: Mumbai}
+- {ats: workday, slug: Careers, name: Broadridge, host: broadridge.wd5.myworkdayjobs.com, site: Careers, city: Mumbai}
+- {ats: workday, slug: External, name: BrowserStack, host: browserstack.wd3.myworkdayjobs.com, site: External, city: Mumbai}
+- {ats: workday, slug: 2, name: Citigroup, city: Mumbai/Pune}
+- {ats: workday, slug: Cohesity_Careers, name: Cohesity, city: Pune}
+- {ats: workday, slug: Copeland_External_Careers_Page, name: Copeland, host: copeland.wd5.myworkdayjobs.com, site: Copeland_External_Careers_Page, city: Pune}
+- {ats: workday, slug: crowdstrikecareers, name: CrowdStrike, host: crowdstrike.wd5.myworkdayjobs.com, site: crowdstrikecareers, city: Pune}
+- {ats: workday, slug: DBS_Careers, name: DBS, city: Mumbai}
+- {ats: workday, slug: DBWebsite, name: "Deutsche Bank", host: db.wd3.myworkdayjobs.com, site: DBWebsite, city: Pune}
+- {ats: workday, slug: ExternalCareers, name: Dow, host: dow.wd1.myworkdayjobs.com, site: ExternalCareers, city: Mumbai}
+- {ats: workday, slug: External, name: Ecolab, city: Pune}
+- {ats: workday, slug: EntegrisCareers, name: Entegris, host: entegris.wd1.myworkdayjobs.com, site: EntegrisCareers, city: Pune}
+- {ats: workday, slug: External, name: Equifax, host: equifax.wd5.myworkdayjobs.com, site: External, city: Pune}
+- {ats: workday, slug: External, name: Evolent, host: evolent.wd1.myworkdayjobs.com, site: External, city: Pune}
+- {ats: workday, slug: EXT, name: Fiserv, host: fiserv.wd5.myworkdayjobs.com, site: EXT, city: Pune}
+- {ats: workday, slug: HARMAN, name: Harman, city: Pune}
+- {ats: workday, slug: jllcareers, name: JLL, host: jll.wd1.myworkdayjobs.com, site: jllcareers, city: Mumbai}
+- {ats: workday, slug: GLOBAL, name: Kimberly-Clark, host: kimberlyclark.wd1.myworkdayjobs.com, site: GLOBAL, city: Pune}
+- {ats: workday, slug: External, name: Labcorp, host: labcorp.wd1.myworkdayjobs.com, site: External, city: Mumbai}
+- {ats: workday, slug: Maersk_Careers, name: Maersk, host: maersk.wd3.myworkdayjobs.com, site: Maersk_Careers, city: "Mumbai/Pune"}
+- {ats: workday, slug: careers, name: Marsh McLennan, city: Pune}
+- {ats: workday, slug: CorporateCareers, name: Mastercard, host: mastercard.wd1.myworkdayjobs.com, site: CorporateCareers, city: Pune}
+- {ats: workday, slug: Medline, name: Medline, host: medline.wd5.myworkdayjobs.com, site: Medline, city: Pune}
+- {ats: workday, slug: External, name: "Morgan Stanley", host: ms.wd5.myworkdayjobs.com, site: External, city: Mumbai}
+- {ats: workday, slug: Americas, name: Morningstar, host: morningstar.wd5.myworkdayjobs.com, site: Americas, city: Mumbai}
+- {ats: workday, slug: Global_External_Site, name: Nasdaq, host: nasdaq.wd1.myworkdayjobs.com, site: Global_External_Site, city: Mumbai}
+- {ats: workday, slug: northerntrust, name: Northern Trust, city: Pune}
+- {ats: workday, slug: nvidiaExternalCareerSite, name: NVIDIA, host: nvidia.wd5.myworkdayjobs.com, site: nvidiaExternalCareerSite, city: "Mumbai/Pune"}
+- {ats: workday, slug: nxp, name: NXP Semiconductors, city: Pune}
+- {ats: workday, slug: panwexternalcareers, name: Palo Alto Networks, city: Pune}
+- {ats: workday, slug: pmexternalcareers, name: "Plante Moran", host: plantemoran.wd1.myworkdayjobs.com, site: pmexternalcareers, city: Mumbai}
+- {ats: workday, slug: Priceline, name: Priceline, host: priceline.wd1.myworkdayjobs.com, site: Priceline, city: Mumbai}
+- {ats: workday, slug: "1000", name: "Procter & Gamble", host: pg.wd5.myworkdayjobs.com, site: "1000", city: Mumbai}
+- {ats: workday, slug: Prodege_Careers, name: Prodege, host: prodege.wd108.myworkdayjobs.com, site: Prodege_Careers, city: Pune}
+- {ats: workday, slug: PTC, name: PTC, host: ptc.wd1.myworkdayjobs.com, site: PTC, city: Pune}
+- {ats: workday, slug: Careers, name: Qualys, host: qualys.wd5.myworkdayjobs.com, site: Careers, city: Pune}
+- {ats: workday, slug: Careers_at_Quantiphi, name: Quantiphi, host: quantiphi.wd1.myworkdayjobs.com, site: Careers_at_Quantiphi, city: Mumbai}
+- {ats: workday, slug: External, name: Rackspace, host: rackspace.wd1.myworkdayjobs.com, site: External, city: Mumbai}
+- {ats: workday, slug: professional, name: Rolls-Royce, host: rollsroyce.wd3.myworkdayjobs.com, site: professional, city: Pune}
+- {ats: workday, slug: SailPoint, name: SailPoint, host: sailpoint.wd1.myworkdayjobs.com, site: SailPoint, city: Pune}
+- {ats: workday, slug: Sandvik_Internal_for_nonWD_employees, name: Sandvik, host: sandvik.wd3.myworkdayjobs.com, site: Sandvik_Internal_for_nonWD_employees, city: Pune}
+- {ats: workday, slug: External, name: "Smith+Nephew", host: smithnephew.wd5.myworkdayjobs.com, site: External, city: Pune}
+- {ats: workday, slug: SSCTechnologies, name: SS&C Technologies, city: Mumbai}
+- {ats: workday, slug: CorporateCareers, name: TIAA, host: tiaa.wd1.myworkdayjobs.com, site: Search, city: "Mumbai/Pune"}
+- {ats: workday, slug: TVH, name: TVH, city: Pune}
+- {ats: workday, slug: External, name: Thermo Fisher Scientific, city: Mumbai}
+- {ats: workday, slug: careers, name: Unilever, host: unilever.wd3.myworkdayjobs.com, site: UK_TemporaryWorkersite, city: Mumbai}
+- {ats: workday, slug: External, name: "Western Union", host: westernunion.wd5.myworkdayjobs.com, site: WesternUnionJobs, city: Pune}
+- {ats: workday, slug: Pune, name: Workday, host: workday.wd5.myworkdayjobs.com, site: Workday, city: Pune}
+- {ats: workday, slug: Pune, name: Zebra Technologies, city: Pune}
+- {ats: workday, slug: Pune, name: Zendesk, host: zendesk.wd1.myworkdayjobs.com, site: zendesk, city: Pune}
+
+- {ats: greenhouse, slug: "6sense", name: 6sense, city: Pune}
+- {ats: greenhouse, slug: "clearwater", name: Clearwater, city: Pune}
+- {ats: greenhouse, slug: "coursera", name: Coursera, city: Mumbai}
+- {ats: greenhouse, slug: "druva", name: Druva, city: Pune}
+- {ats: greenhouse, slug: "fictiv", name: Fictiv, city: Pune}
+- {ats: greenhouse, slug: "hginsights", name: HG Insights, city: Pune}
+- {ats: greenhouse, slug: "logicmonitor", name: LogicMonitor, city: Pune}
+- {ats: greenhouse, slug: "nice", name: NICE, city: Pune}
+- {ats: greenhouse, slug: "pubmatic", name: PubMatic, city: Pune}
+- {ats: greenhouse, slug: "quinstreet", name: QuinStreet, city: Pune}
+- {ats: greenhouse, slug: "rubrik", name: Rubrik, city: Pune}
+- {ats: greenhouse, slug: "showpad", name: Showpad, city: Pune}
+- {ats: greenhouse, slug: "sonatus", name: Sonatus, city: Pune}
+- {ats: greenhouse, slug: "sonicwall", name: SonicWall, city: Pune}
+- {ats: greenhouse, slug: "imc", name: IMC, city: Mumbai}
+- {ats: greenhouse, slug: "blenheimchalcotindia", name: Blenheim Chalcot India, city: Mumbai}
+- {ats: greenhouse, slug: "boku", name: Boku, city: Mumbai}
+- {ats: greenhouse, slug: "capco", name: Capco, city: Pune}
+- {ats: greenhouse, slug: "contentstack", name: Contentstack, city: Pune}
+- {ats: greenhouse, slug: "elastic", name: Elastic, city: Mumbai}
+- {ats: greenhouse, slug: "fictiv", name: Fictiv, city: Pune}
+- {ats: greenhouse, slug: "jumptrading", name: Jump Trading, city: Mumbai}
+- {ats: greenhouse, slug: "netskope", name: Netskope, city: Pune}
+- {ats: greenhouse, slug: "prodigal", name: Prodigal, city: Mumbai}
+- {ats: greenhouse, slug: "sahajsoftware", name: Sahaj Software, city: Pune}
+- {ats: greenhouse, slug: "sigmoid", name: Sigmoid, city: Pune}
+- {ats: greenhouse, slug: "solarwinds", name: SolarWinds, city: Pune}
+- {ats: greenhouse, slug: "zinnia", name: Zinnia, city: Pune}
+- {ats: greenhouse, slug: "connectwise", name: ConnectWise, city: Pune/Mumbai}
+
+- {ats: lever, slug: cin7, name: Cin7, city: Pune}
+- {ats: lever, slug: coupa, name: Coupa, city: Pune}
+- {ats: lever, slug: hevo, name: Hevo Data, city: Pune}
+- {ats: lever, slug: idt, name: IDT, city: Pune}
+- {ats: lever, slug: mactores, name: Mactores, city: Mumbai}
+- {ats: lever, slug: mindtickle, name: Mindtickle, city: Pune}
+- {ats: lever, slug: onit, name: Onit, city: Pune}
+
+- {ats: ashby, slug: ddn, name: DDN, city: Pune}
+- {ats: ashby, slug: opengov, name: OpenGov, city: Pune}
+- {ats: ashby, slug: riveron, name: Riveron India, city: Pune}
+- {ats: ashby, slug: snowflake, name: Snowflake, city: Pune}
+- {ats: ashby, slug: solvd, name: Solvd, city: Pune}
+- {ats: ashby, slug: protegrity, name: Protegrity, city: Mumbai}
+
+- {ats: smartrecruiters, slug: aristanetworks, name: Arista Networks, city: Pune}
+- {ats: smartrecruiters, slug: assent, name: Assent, city: Pune}
+- {ats: smartrecruiters, slug: endava, name: Endava, city: Pune}
+- {ats: smartrecruiters, slug: Konecranes, name: Konecranes, city: Pune}
+- {ats: smartrecruiters, slug: nielseniq, name: NielsenIQ, city: Mumbai/Pune}
+- {ats: smartrecruiters, slug: sia, name: Sia, city: Mumbai}
+- {ats: smartrecruiters, slug: jitterbit, name: Jitterbit, city: Pune}
+- {ats: smartrecruiters, slug: experian, name: Experian, city: Mumbai}
+- {ats: smartrecruiters, slug: xplortechnologies, name: Xplor Technologies, city: Pune}
+
+- {ats: oracle_recruiting_cloud, slug: CynclyJobs, name: Cyncly, city: Pune}
+- {ats: oracle_recruiting_cloud, slug: ExternalCareerSite, name: Datavail, city: Mumbai}
+- {ats: oracle_recruiting_cloud, slug: CX_1, name: Emerson, city: Pune}
+- {ats: oracle_recruiting_cloud, slug: CX_1, name: Perficient, city: Pune}
+- {ats: oracle_recruiting_cloud, slug: CX, name: Kotak Mahindra Bank, city: Mumbai/Pune}
+- {ats: oracle_recruiting_cloud, slug: CX_1001, name: JPMorgan Chase, city: Mumbai}
+- {ats: oracle_recruiting_cloud, slug: BNY-Careers, name: BNY, city: Pune}
+- {ats: oracle_recruiting_cloud, slug: bristlecone-careers, name: Bristlecone, city: Mumbai}
+
+- {ats: successfactors, slug: null, name: Atos, careers_url: "https://jobs.atos.net/"}
+- {ats: successfactors, slug: null, name: Avaya, careers_url: "https://careers.avaya.com/"}
+- {ats: successfactors, slug: null, name: Bajaj Auto, careers_url: "https://careers.bajajauto.com/"}
+- {ats: successfactors, slug: null, name: Birlasoft, careers_url: "https://jobs.birlasoft.com/"}
+- {ats: successfactors, slug: null, name: Capgemini, careers_url: "https://careers.capgemini.com/"}
+- {ats: successfactors, slug: null, name: Danfoss, careers_url: "https://jobs.danfoss.com/"}
+- {ats: successfactors, slug: null, name: ICICI Securities, careers_url: "https://careers.icicisecurities.com/"}
+- {ats: successfactors, slug: null, name: Indian Hotels / IHCL, careers_url: "https://careers.ihcltata.com/"}
+- {ats: successfactors, slug: null, name: L&T Technology Services, careers_url: "https://jobs.ltts.com/"}
+- {ats: successfactors, slug: null, name: Lupin, careers_url: "https://careers.lupin.com/"}
+- {ats: successfactors, slug: null, name: Nomura, careers_url: "https://careers.nomura.com/"}
+- {ats: successfactors, slug: null, name: Schaeffler, careers_url: "https://jobs.schaeffler.com/"}
+- {ats: successfactors, slug: null, name: Sun Pharma, careers_url: "https://careers.sunpharma.com/"}
+- {ats: successfactors, slug: null, name: Tata Motors, careers_url: "https://careers.tatamotors.com/"}
+- {ats: successfactors, slug: null, name: TE Connectivity, careers_url: "https://careers.te.com/"}
+- {ats: successfactors, slug: null, name: Wartsila, careers_url: "https://careers.wartsila.com/"}
+- {ats: successfactors, slug: null, name: Wipro, careers_url: "https://careers.wipro.com/"}
+
+- {ats: darwinbox, slug: null, name: Upstox, careers_url: "https://upstox.darwinbox.in/ms/candidatev2/main/careers"}
+- {ats: darwinbox, slug: null, name: Emeritus, careers_url: "https://emeritus.darwinbox.in/ms/candidatev2/main/careers"}
+
+#bangalore
+- {ats: greenhouse, slug: 6sense, name: 6sense}
+- {ats: greenhouse, slug: abnormal, name: Abnormal}
+- {ats: greenhouse, slug: airbnb, name: Airbnb}
+- {ats: greenhouse, slug: alphasense, name: AlphaSense}
+- {ats: greenhouse, slug: anthropic, name: Anthropic}
+- {ats: greenhouse, slug: apollo, name: Apollo.io}
+- {ats: greenhouse, slug: avathon, name: Avathon}
+- {ats: greenhouse, slug: celonis, name: Celonis}
+- {ats: greenhouse, slug: cloudsek, name: CloudSEK}
+- {ats: greenhouse, slug: cockroachlabs, name: Cockroach Labs}
+- {ats: greenhouse, slug: commerceiq, name: CommerceIQ}
+- {ats: greenhouse, slug: commvault, name: Commvault}
+- {ats: greenhouse, slug: conga, name: Conga}
+- {ats: greenhouse, slug: contentstack, name: Contentstack}
+- {ats: greenhouse, slug: coupang, name: Coupang}
+- {ats: greenhouse, slug: databricks, name: Databricks}
+- {ats: greenhouse, slug: earnin, name: EarnIn}
+- {ats: greenhouse, slug: elastic, name: Elastic}
+- {ats: greenhouse, slug: endorlabs, name: Endor Labs}
+- {ats: greenhouse, slug: enterpret, name: Enterpret}
+- {ats: greenhouse, slug: everpure, name: Everpure}
+- {ats: greenhouse, slug: five9, name: Five9}
+- {ats: greenhouse, slug: fivetran, name: Fivetran}
+- {ats: greenhouse, slug: forward, name: Forward}
+- {ats: greenhouse, slug: gitlab, name: GitLab}
+- {ats: greenhouse, slug: glance, name: Glance}
+- {ats: greenhouse, slug: hackerrank, name: HackerRank}
+- {ats: greenhouse, slug: inMobi, name: InMobi}
+- {ats: greenhouse, slug: instawork, name: Instawork}
+- {ats: greenhouse, slug: jfrog, name: JFrog}
+- {ats: greenhouse, slug: jumio, name: Jumio}
+- {ats: greenhouse, slug: legion, name: Legion}
+- {ats: greenhouse, slug: logicmonitor, name: LogicMonitor}
+- {ats: greenhouse, slug: mongodb, name: MongoDB}
+- {ats: greenhouse, slug: netradyne, name: Netradyne}
+- {ats: greenhouse, slug: netskope, name: Netskope}
+- {ats: greenhouse, slug: newrelic, name: New Relic}
+- {ats: greenhouse, slug: observeai, name: Observe.AI}
+- {ats: greenhouse, slug: okta, name: Okta}
+- {ats: greenhouse, slug: onetrust, name: OneTrust}
+- {ats: greenhouse, slug: pingidentity, name: Ping Identity}
+- {ats: greenhouse, slug: prodigal, name: Prodigal}
+- {ats: greenhouse, slug: project44, name: Project44}
+- {ats: greenhouse, slug: razorpay, name: Razorpay}
+- {ats: greenhouse, slug: reltio, name: Reltio}
+- {ats: greenhouse, slug: rubrik, name: Rubrik}
+- {ats: greenhouse, slug: sahajsoftware, name: Sahaj Software}
+- {ats: greenhouse, slug: sigmoid, name: Sigmoid}
+- {ats: greenhouse, slug: smartsheet, name: Smartsheet}
+- {ats: greenhouse, slug: solarwinds, name: SolarWinds}
+- {ats: greenhouse, slug: sonicwall, name: SonicWall}
+- {ats: greenhouse, slug: stripe, name: Stripe}
+- {ats: greenhouse, slug: thoughtworks, name: Thoughtworks}
+- {ats: greenhouse, slug: toast, name: Toast}
+- {ats: greenhouse, slug: truecaller, name: Truecaller}
+- {ats: greenhouse, slug: truefoundry, name: TrueFoundry}
+- {ats: greenhouse, slug: turing, name: Turing}
+- {ats: greenhouse, slug: veeam, name: Veeam Software}
+- {ats: greenhouse, slug: zeta-global, name: Zeta Global}
+- {ats: greenhouse, slug: zinnia, name: Zinnia}
+- {ats: greenhouse, slug: zscaler, name: Zscaler}
+
+- {ats: lever, slug: 100ms, name: 100ms}
+- {ats: lever, slug: acceldata, name: Acceldata}
+- {ats: lever, slug: coupa, name: Coupa}
+- {ats: lever, slug: cred, name: CRED}
+- {ats: lever, slug: cyderes, name: Cyderes}
+- {ats: lever, slug: fampay, name: FamPay}
+- {ats: lever, slug: greenlight, name: Greenlight}
+- {ats: lever, slug: hevo, name: Hevo Data}
+- {ats: lever, slug: kobie, name: Kobie}
+- {ats: lever, slug: meeshо, name: Meesho}
+- {ats: lever, slug: mindtickle, name: Mindtickle}
+- {ats: lever, slug: nium, name: Nium}
+- {ats: lever, slug: pdi, name: PDI Technologies}
+- {ats: lever, slug: paytm, name: Paytm}
+- {ats: lever, slug: saviynt, name: Saviynt}
+- {ats: lever, slug: shieldai, name: Shield AI}
+- {ats: lever, slug: zeta, name: Zeta}
+
+- {ats: ashby, slug: aiprise, name: AiPrise}
+- {ats: ashby, slug: altimate-ai, name: Altimate AI}
+- {ats: ashby, slug: anyscale, name: Anyscale}
+- {ats: ashby, slug: arrive, name: Arrive}
+- {ats: ashby, slug: ato-b, name: AtoB}
+- {ats: ashby, slug: avoca, name: Avoca}
+- {ats: ashby, slug: bolna, name: Bolna AI}
+- {ats: ashby, slug: bureau, name: Bureau}
+- {ats: ashby, slug: cardboard, name: Cardboard}
+- {ats: ashby, slug: cyberhaven, name: Cyberhaven}
+- {ats: ashby, slug: clueso, name: Clueso}
+- {ats: ashby, slug: ddn, name: DDN}
+- {ats: ashby, slug: ema, name: Ema}
+- {ats: ashby, slug: harvey, name: Harvey}
+- {ats: ashby, slug: hinge-health, name: Hinge Health}
+- {ats: ashby, slug: kong, name: Kong}
+- {ats: ashby, slug: metaforms, name: Metaforms}
+- {ats: ashby, slug: netgear, name: NETGEAR}
+- {ats: ashby, slug: provision, name: Provision}
+- {ats: ashby, slug: sarvam-ai, name: Sarvam AI}
+- {ats: ashby, slug: spotdraft, name: SpotDraft}
+- {ats: ashby, slug: tekion, name: Tekion}
+- {ats: ashby, slug: uipath, name: UiPath}
+- {ats: ashby, slug: uptimeai, name: UptimeAI}
+
+- {ats: workday, slug: "4flow", name: 4flow}
+- {ats: workday, slug: "External_Career_Page", name: ABB}
+- {ats: workday, slug: AvanadeCareers, name: Accenture, host: accenture.wd103.myworkdayjobs.com, site: AvanadeCareers}
+- {ats: workday, slug: external_experienced, name: Adobe, host: adobe.wd5.myworkdayjobs.com, site: external_experienced}
+- {ats: workday, slug: Alegeus_External_Careers, name: Alegeus, host: alegeus.wd1.myworkdayjobs.com, site: Alegeus_External_Careers}
+- {ats: workday, slug: External, name: "Analog Devices", host: analogdevices.wd1.myworkdayjobs.com, site: External}
+- {ats: workday, slug: Ansira_Careers, name: Ansira, host: ansira.wd1.myworkdayjobs.com, site: Ansira_Careers}
+- {ats: workday, slug: APTIV_CAREERS, name: Aptiv, host: aptiv.wd5.myworkdayjobs.com, site: APTIV_CAREERS}
+- {ats: workday, slug: External, name: "Arctic Wolf", host: arcticwolf.wd1.myworkdayjobs.com, site: External}
+- {ats: workday, slug: Careers, name: AstraZeneca, host: astrazeneca.wd3.myworkdayjobs.com, site: Careers}
+- {ats: workday, slug: ATTGeneral, name: "AT&T", host: att.wd1.myworkdayjobs.com, site: ATTGeneral}
+- {ats: workday, slug: External, name: athenahealth, host: athenahealth.wd1.myworkdayjobs.com, site: External}
+- {ats: workday, slug: Ext, name: Autodesk, host: autodesk.wd1.myworkdayjobs.com, site: Ext}
+- {ats: workday, slug: AutomationAnywhereJobs, name: "Automation Anywhere", host: automationanywhere.wd5.myworkdayjobs.com, site: AutomationAnywhereJobs}
+- {ats: workday, slug: AVEVA_careers, name: AVEVA, host: aveva.wd3.myworkdayjobs.com, site: AVEVA_careers}
+- {ats: workday, slug: External, name: Avnet, host: avnet.wd1.myworkdayjobs.com, site: External}
+- {ats: workday, slug: BakerHughes, name: "Baker Hughes", host: bakerhughes.wd5.myworkdayjobs.com, site: BakerHughes}
+- {ats: workday, slug: External_Career_Site_Barclays, name: Barclays, host: barclays.wd3.myworkdayjobs.com, site: External_Career_Site_Barclays}
+- {ats: workday, slug: baxter, name: Baxter, host: baxter.wd1.myworkdayjobs.com, site: baxter}
+- {ats: workday, slug: BlackLineCareers, name: BlackLine, host: blackline.wd108.myworkdayjobs.com, site: BlackLineCareers}
+- {ats: workday, slug: BlackRock_Professional, name: BlackRock, host: blackrock.wd1.myworkdayjobs.com, site: BlackRock_Professional}
+- {ats: workday, slug: EXTERNAL_CAREERS, name: Boeing, host: boeing.wd1.myworkdayjobs.com, site: EXTERNAL_CAREERS}
+- {ats: workday, slug: Careers, name: Broadridge, host: broadridge.wd5.myworkdayjobs.com, site: Careers}
+- {ats: workday, slug: "Hiring", name: Candescent}
+- {ats: workday, slug: Capital_One, name: "Capital One", host: capitalone.wd12.myworkdayjobs.com, site: Capital_One}
+- {ats: workday, slug: jobs, name: Carrier, host: carrier.wd5.myworkdayjobs.com, site: jobs}
+- {ats: workday, slug: Careers, name: CDW, host: cdw.wd5.myworkdayjobs.com, site: Careers}
+- {ats: workday, slug: jobs, name: Chevron, host: chevron.wd5.myworkdayjobs.com, site: jobs}
+- {ats: workday, slug: Careers, name: Ciena, host: ciena.wd5.myworkdayjobs.com, site: Careers}
+- {ats: workday, slug: cignacareers, name: Cigna, host: cigna.wd5.myworkdayjobs.com, site: cignacareers}
+- {ats: workday, slug: Cisco_Careers, name: Cisco, host: cisco.wd5.myworkdayjobs.com, site: Cisco_Careers}
+- {ats: workday, slug: Clarivate_Careers, name: Clarivate, host: clarivate.wd3.myworkdayjobs.com, site: Clarivate_Careers}
+- {ats: workday, slug: External_Career, name: Cloudera, host: cloudera.wd5.myworkdayjobs.com, site: External_Career}
+- {ats: workday, slug: cme_careers, name: "CME Group", host: cmegroup.wd1.myworkdayjobs.com, site: cme_careers}
+- {ats: workday, slug: "Cohesity_Careers", name: Cohesity}
+- {ats: workday, slug: crowdstrikecareers, name: CrowdStrike, host: crowdstrike.wd5.myworkdayjobs.com, site: crowdstrikecareers}
+- {ats: workday, slug: DanaherJobs, name: Danaher, host: danaher.wd1.myworkdayjobs.com, site: DanaherJobs}
+- {ats: workday, slug: DBWebsite, name: "Deutsche Bank", host: db.wd3.myworkdayjobs.com, site: DBWebsite}
+- {ats: workday, slug: Diageo_Careers, name: Diageo, host: diageo.wd3.myworkdayjobs.com, site: Diageo_Careers}
+- {ats: workday, slug: disneycareerdc, name: Disney, host: disney.wd5.myworkdayjobs.com, site: disneycareerdc}
+- {ats: workday, slug: duckcreekcareers, name: "Duck Creek", host: duckcreek.wd1.myworkdayjobs.com, site: duckcreekcareers}
+- {ats: workday, slug: DXCJobs, name: "DXC Technology", host: dxctechnology.wd1.myworkdayjobs.com, site: DXCJobs}
+- {ats: workday, slug: apply, name: eBay, host: ebay.wd5.myworkdayjobs.com, site: apply}
+- {ats: workday, slug: "Ecolab_External", name: Ecolab}
+- {ats: workday, slug: carelonglobal_in, name: "Elevance Health", host: elevancehealth.wd1.myworkdayjobs.com, site: carelonglobal_in}
+- {ats: workday, slug: DanaherJobs, name: Danaher, host: danaher.wd1.myworkdayjobs.com, site: DanaherJobs}
+- {ats: workday, slug: "fmr.wd1", name: Fidelity Investments}
+- {ats: workday, slug: Fiserv, name: Fiserv, host: fiserv.wd5.myworkdayjobs.com, site: EXT}
+- {ats: workday, slug: "Flywire", name: Flywire}
+- {ats: workday, slug: fractal, name: "Fractal Analytics", host: fractal.wd1.myworkdayjobs.com, site: Careers}
+- {ats: workday, slug: gevernova, name: "GE Vernova", host: gevernova.wd5.myworkdayjobs.com, site: Vernova_ExternalSite}
+- {ats: workday, slug: generalmotors, name: "General Motors", host: generalmotors.wd5.myworkdayjobs.com, site: Careers_GM}
+- {ats: workday, slug: genpact, name: Genpact, host: genpact.wd108.myworkdayjobs.com, site: campussite}
+- {ats: workday, slug: Gilead, name: Gilead, host: gilead.wd1.myworkdayjobs.com, site: gileadcareers}
+- {ats: workday, slug: GSK, name: GSK, host: gsk.wd5.myworkdayjobs.com, site: GSKCareers}
+- {ats: workday, slug: guidewire, name: Guidewire, host: guidewire.wd5.myworkdayjobs.com, site: External}
+- {ats: workday, slug: "HARMAN", name: Harman}
+- {ats: workday, slug: hpe, name: "Hewlett Packard Enterprise", host: hpe.wd5.myworkdayjobs.com, site: Jobsathpe}
+- {ats: workday, slug: hitachi, name: Hitachi, host: hitachi.wd1.myworkdayjobs.com, site: hitachi}
+- {ats: workday, slug: hp, name: HP, host: hp.wd5.myworkdayjobs.com, site: ExternalCareerSite}
+- {ats: workday, slug: intel, name: Intel, host: intel.wd1.myworkdayjobs.com, site: External}
+- {ats: workday, slug: iqvia, name: IQVIA, host: iqvia.wd1.myworkdayjobs.com, site: iqvia}
+- {ats: workday, slug: jiostar, name: JioStar, host: jiostar.wd102.myworkdayjobs.com, site: jiostar}
+- {ats: workday, slug: jllcareers, name: JLL, host: jll.wd1.myworkdayjobs.com, site: jllcareers}
+- {ats: workday, slug: kyndrylprofessionalcareers, name: Kyndryl, host: kyndryl.wd5.myworkdayjobs.com, site: kyndrylprofessionalcareers}
+- {ats: workday, slug: labcorp, name: Labcorp, host: labcorp.wd1.myworkdayjobs.com, site: External}
+- {ats: workday, slug: lseg, name: "London Stock Exchange Group", host: lseg.wd3.myworkdayjobs.com, site: Careers}
+- {ats: workday, slug: Maersk_Careers, name: Maersk, host: maersk.wd3.myworkdayjobs.com, site: Maersk_Careers}
+- {ats: workday, slug: magna, name: Magna, host: magna.wd3.myworkdayjobs.com, site: magna}
+- {ats: workday, slug: marvell, name: Marvell, host: marvell.wd1.myworkdayjobs.com, site: MarvellCareers}
+- {ats: workday, slug: mavenir, name: Mavenir, host: mavenir.wd1.myworkdayjobs.com, site: Mavenir_Careers}
+- {ats: workday, slug: mckesson, name: McKesson, host: mckesson.wd3.myworkdayjobs.com, site: External_Careers}
+- {ats: workday, slug: micron, name: "Micron Technology", host: micron.wd1.myworkdayjobs.com, site: External}
+- {ats: workday, slug: ms, name: "Morgan Stanley", host: ms.wd5.myworkdayjobs.com, site: External}
+- {ats: workday, slug: ntrs, name: "Northern Trust", host: ntrs.wd1.myworkdayjobs.com, site: northerntrust}
+- {ats: workday, slug: nvidiaExternalCareerSite, name: NVIDIA, host: nvidia.wd5.myworkdayjobs.com, site: nvidiaExternalCareerSite}
+- {ats: workday, slug: "omnissa", name: Omnissa}
+- {ats: workday, slug: "OutSystems", name: OutSystems}
+- {ats: workday, slug: "paloaltonetworks", name: Palo Alto Networks}
+- {ats: workday, slug: paypal, name: PayPal, host: paypal.wd1.myworkdayjobs.com, site: jobs}
+- {ats: workday, slug: philips, name: Philips, host: philips.wd3.myworkdayjobs.com, site: jobs-and-careers}
+- {ats: workday, slug: postman, name: Postman, host: postman.wd108.myworkdayjobs.com, site: careers}
+- {ats: workday, slug: prudential, name: Prudential, host: prudential.wd3.myworkdayjobs.com, site: prudential}
+- {ats: workday, slug: PTC, name: PTC, host: ptc.wd1.myworkdayjobs.com, site: PTC}
+- {ats: workday, slug: pwc, name: PwC, host: pwc.wd3.myworkdayjobs.com, site: Global_Campus_Careers}
+- {ats: workday, slug: rollsroyce, name: Rolls-Royce, host: rollsroyce.wd3.myworkdayjobs.com, site: Intern_Graduate}
+- {ats: workday, slug: salesforce, name: Salesforce, host: salesforce.wd12.myworkdayjobs.com, site: External_Career_Site}
+- {ats: workday, slug: sec, name: Samsung, host: sec.wd3.myworkdayjobs.com, site: Samsung_Careers}
+- {ats: workday, slug: servicetitan, name: ServiceTitan, host: servicetitan.wd1.myworkdayjobs.com, site: servicetitan}
+- {ats: workday, slug: shell, name: Shell, host: shell.wd3.myworkdayjobs.com, site: ShellCareers}
+- {ats: workday, slug: SiFive, name: SiFive, host: sifive.wd1.myworkdayjobs.com, site: sifivecareers}
+- {ats: workday, slug: statestreet, name: "State Street", host: statestreet.wd1.myworkdayjobs.com, site: Global}
+- {ats: workday, slug: stellantis, name: Stellantis, host: stellantis.wd3.myworkdayjobs.com, site: External_Career_Site_ID01}
+- {ats: workday, slug: stryker, name: Stryker, host: stryker.wd1.myworkdayjobs.com, site: StrykerCareers}
+- {ats: workday, slug: synechron, name: Synechron, host: synechron.wd1.myworkdayjobs.com, site: SynechronCareers}
+- {ats: workday, slug: target, name: "Target India", host: target.wd5.myworkdayjobs.com, site: targetcareers}
+- {ats: workday, slug: telstra, name: Telstra, host: telstra.wd3.myworkdayjobs.com, site: Telstra_Careers}
+- {ats: workday, slug: "thermofisher", name: Thermo Fisher}
+- {ats: workday, slug: transunion, name: TransUnion, host: transunion.wd5.myworkdayjobs.com, site: transunion}
+- {ats: workday, slug: trellix, name: Trellix, host: trellix.wd1.myworkdayjobs.com, site: EnterpriseCareers}
+- {ats: workday, slug: "trintech", name: Trintech}
+- {ats: workday, slug: unisys, name: Unisys, host: unisys.wd5.myworkdayjobs.com, site: External}
+- {ats: workday, slug: visa, name: Visa, host: visa.wd5.myworkdayjobs.com, site: visa}
+- {ats: workday, slug: "wellsfargo", name: Wells Fargo}
+- {ats: workday, slug: "zebra", name: Zebra Technologies}
+
+- {ats: oracle_recruiting_cloud, slug: null, name: Bristlecone, careers_url: "https://iaagiz.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/bristlecone-careers"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Datavail, careers_url: "https://eifn.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/ExternalCareerSite"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Emerson, careers_url: "https://hdjq.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1"}
+- {ats: oracle_recruiting_cloud, slug: null, name: EXL, careers_url: "https://fa-ewjt-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Goldman Sachs, careers_url: "https://hdpc.fa.us2.oraclecloud.com"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Honeywell, careers_url: "https://icfcjb.fa.ocs.oraclecloud.com"}
+- {ats: oracle_recruiting_cloud, slug: null, name: JPMorgan Chase, careers_url: "https://jpmc.fa.oraclecloud.com"}
+- {ats: oracle_recruiting_cloud, slug: null, name: KPMG Global Services, careers_url: "https://ejgk.fa.em2.oraclecloud.com"}
+- {ats: oracle_recruiting_cloud, slug: null, name: KPMG India, careers_url: "https://ejgk.fa.em2.oraclecloud.com"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Oracle, careers_url: "https://eeho.fa.us2.oraclecloud.com"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Pearson, careers_url: "https://hccz.fa.em3.oraclecloud.com"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Tata Capital, careers_url: "https://eofh.fa.em2.oraclecloud.com"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Texas Instruments, careers_url: "https://edbz.fa.us2.oraclecloud.com"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Tradeweb, careers_url: "https://ecnf.fa.us2.oraclecloud.com"}
+
+- {ats: smartrecruiters, slug: abbvie, name: AbbVie}
+- {ats: smartrecruiters, slug: aristanetworks, name: Arista Networks}
+- {ats: smartrecruiters, slug: continental, name: Continental}
+- {ats: smartrecruiters, slug: endava, name: Endava}
+- {ats: smartrecruiters, slug: freshworks, name: Freshworks}
+- {ats: smartrecruiters, slug: grab, name: Grab}
+- {ats: smartrecruiters, slug: jitterbit, name: Jitterbit}
+- {ats: smartrecruiters, slug: nexthink, name: Nexthink}
+- {ats: smartrecruiters, slug: renesas, name: Renesas Electronics}
+- {ats: smartrecruiters, slug: servicenow, name: ServiceNow}
+- {ats: smartrecruiters, slug: swiggy, name: Swiggy}
+- {ats: smartrecruiters, slug: wabtec, name: Wabtec}
+- {ats: smartrecruiters, slug: western-digital, name: Western Digital}
+
+- {ats: workable, slug: null, name: Exponent Energy, careers_url: "https://apply.workable.com/exponent-energy/"}
+
+- {ats: darwinbox, slug: kreditbee, name: KreditBee}
+- {ats: darwinbox, slug: latentview, name: LatentView}
+- {ats: darwinbox, slug: locus, name: Locus}
+- {ats: darwinbox, slug: moengage, name: MoEngage}
+- {ats: darwinbox, slug: moneyview, name: Moneyview}
+- {ats: darwinbox, slug: niyo, name: Niyo}
+- {ats: darwinbox, slug: pixxel, name: Pixxel}
+- {ats: darwinbox, slug: porter, name: Porter}
+- {ats: darwinbox, slug: scripbox, name: Scripbox}
+- {ats: darwinbox, slug: treebo, name: Treebo}
+- {ats: darwinbox, slug: udaan, name: Udaan}
+- {ats: darwinbox, slug: upstox, name: Upstox}
+
+- {ats: successfactors, slug: null, name: ANZ, careers_url: "https://careers.anz.com/"}
+- {ats: successfactors, slug: null, name: Atos, careers_url: "https://jobs.atos.net/"}
+- {ats: successfactors, slug: null, name: Bayer, careers_url: "https://jobs.bayer.com/"}
+- {ats: successfactors, slug: null, name: Biocon, careers_url: "https://careers.biocon.com/"}
+- {ats: successfactors, slug: null, name: Birlasoft, careers_url: "https://jobs.birlasoft.com/"}
+- {ats: successfactors, slug: null, name: BT Group, careers_url: "https://jobs.bt.com/"}
+- {ats: successfactors, slug: null, name: Capgemini, careers_url: "https://careers.capgemini.com/"}
+- {ats: successfactors, slug: null, name: ExxonMobil, careers_url: "https://jobs.exxonmobil.com/"}
+- {ats: successfactors, slug: null, name: EY, careers_url: "https://careers.ey.com/"}
+- {ats: successfactors, slug: null, name: Firstsource, careers_url: "https://careers.firstsource.com/"}
+- {ats: successfactors, slug: null, name: Halliburton, careers_url: "https://jobs.halliburton.com/"}
+- {ats: successfactors, slug: null, name: NetApp, careers_url: "https://jobs.netapp.com/"}
+- {ats: successfactors, slug: null, name: Novo Nordisk, careers_url: "https://careers.novonordisk.com/"}
+- {ats: successfactors, slug: null, name: PayU, careers_url: "https://careers.payu.in/"}
+- {ats: successfactors, slug: null, name: SAP, careers_url: "https://careers.sap.com/"}
+- {ats: successfactors, slug: null, name: SKF, careers_url: "https://career.skf.com/"}
+- {ats: successfactors, slug: null, name: TE Connectivity, careers_url: "https://careers.te.com/"}
+- {ats: successfactors, slug: null, name: Wipro, careers_url: "https://careers.wipro.com/"}
+- {ats: successfactors, slug: null, name: Volvo, careers_url: "https://jobs.volvogroup.com/"}
+
+# Hyderabad ATS company database
+- {ats: workday, slug: abbottcareers, name: Abbott, host: abbott.wd5.myworkdayjobs.com, site: abbottcareers}
+- {ats: workday, slug: External, name: Agilent, host: agilent.wd5.myworkdayjobs.com, site: Agilent_Careers}
+- {ats: workday, slug: ameriprise, name: "Ameriprise Financial", host: ameriprise.wd5.myworkdayjobs.com, site: ameriprise}
+- {ats: workday, slug: amgen, name: Amgen, host: amgen.wd1.myworkdayjobs.com, site: Careers}
+- {ats: workday, slug: AVEVA_careers, name: AVEVA, host: aveva.wd3.myworkdayjobs.com, site: AVEVA_careers}
+- {ats: workday, slug: BakerHughes, name: "Baker Hughes", host: bakerhughes.wd5.myworkdayjobs.com, site: BakerHughes}
+- {ats: workday, slug: Blackbaud, name: Blackbaud, host: blackbaud.wd1.myworkdayjobs.com, site: ExternalCareers}
+- {ats: workday, slug: BristolMyersSquibb, name: "Bristol Myers Squibb", host: bristolmyerssquibb.wd5.myworkdayjobs.com, site: BMS}
+- {ats: workday, slug: broadcom, name: Broadcom, host: broadcom.wd1.myworkdayjobs.com, site: External_Career}
+- {ats: workday, slug: Broadridge, name: Broadridge, host: broadridge.wd5.myworkdayjobs.com, site: Careers}
+- {ats: workday, slug: cadence, name: Cadence, host: cadence.wd1.myworkdayjobs.com, site: External_Careers}
+- {ats: workday, slug: Candescent, name: Candescent}
+- {ats: workday, slug: carrier, name: Carrier, host: carrier.wd5.myworkdayjobs.com, site: jobs}
+- {ats: workday, slug: cignacareers, name: Cigna, host: cigna.wd5.myworkdayjobs.com, site: cignacareers}
+- {ats: workday, slug: Cisco_Careers, name: Cisco, host: cisco.wd5.myworkdayjobs.com, site: Cisco_Careers}
+- {ats: workday, slug: Copart, name: Copart, host: copart.wd12.myworkdayjobs.com, site: Copart}
+- {ats: workday, slug: DBS_Careers, name: DBS}
+- {ats: workday, slug: DXCJobs, name: "DXC Technology", host: dxctechnology.wd1.myworkdayjobs.com, site: DXCJobs}
+- {ats: workday, slug: FactSet, name: FactSet, host: factset.wd108.myworkdayjobs.com, site: FactSetCareers}
+- {ats: workday, slug: genesys, name: Genesys, host: genesys.wd1.myworkdayjobs.com, site: genesys}
+- {ats: workday, slug: genpact, name: Genpact, host: genpact.wd108.myworkdayjobs.com, site: campussite}
+- {ats: workday, slug: Guidehouse, name: Guidehouse, host: guidehouse.wd1.myworkdayjobs.com, site: External}
+- {ats: workday, slug: IngramMicro, name: "Ingram Micro", host: ingrammicro.wd5.myworkdayjobs.com, site: IngramMicro}
+- {ats: workday, slug: Invesco, name: Invesco, host: invesco.wd1.myworkdayjobs.com, site: IVZ}
+- {ats: workday, slug: jllcareers, name: JLL, host: jll.wd1.myworkdayjobs.com, site: jllcareers}
+- {ats: workday, slug: lseg, name: "London Stock Exchange Group", host: lseg.wd3.myworkdayjobs.com, site: Careers}
+- {ats: workday, slug: lonza, name: Lonza, host: lonza.wd3.myworkdayjobs.com, site: Lonza_Careers}
+- {ats: workday, slug: marvell, name: Marvell, host: marvell.wd1.myworkdayjobs.com, site: MarvellCareers}
+- {ats: workday, slug: CorporateCareers, name: Mastercard, host: mastercard.wd1.myworkdayjobs.com, site: CorporateCareers}
+- {ats: workday, slug: medtronic, name: Medtronic, host: medtronic.wd1.myworkdayjobs.com, site: MedtronicCareers}
+- {ats: workday, slug: micron, name: "Micron Technology", host: micron.wd1.myworkdayjobs.com, site: External}
+- {ats: workday, slug: ncr, name: "NCR Voyix", host: ncr.wd1.myworkdayjobs.com, site: ext_non_us}
+- {ats: workday, slug: novartis, name: Novartis, host: novartis.wd3.myworkdayjobs.com, site: Novartis_Careers}
+- {ats: workday, slug: oaktree, name: Oaktree, host: oaktree.wd1.myworkdayjobs.com, site: oaktree}
+- {ats: workday, slug: panwexternalcareers, name: Palo Alto Networks}
+- {ats: workday, slug: postman, name: Postman, host: postman.wd108.myworkdayjobs.com, site: careers}
+- {ats: workday, slug: P_G_Careers, name: "Procter & Gamble", host: pg.wd5.myworkdayjobs.com, site: "1000"}
+- {ats: workday, slug: Proofpoint, name: Proofpoint, host: proofpoint.wd5.myworkdayjobs.com, site: ProofpointCareers}
+- {ats: workday, slug: Reputation, name: Reputation, host: reputation.wd1.myworkdayjobs.com, site: External}
+- {ats: workday, slug: RiminiStreet, name: "Rimini Street", host: riministreet.wd1.myworkdayjobs.com, site: RiminiStreet}
+- {ats: workday, slug: Roche, name: Roche, host: roche.wd3.myworkdayjobs.com, site: roche-ext}
+- {ats: workday, slug: salesforce, name: Salesforce, host: salesforce.wd12.myworkdayjobs.com, site: External_Career_Site}
+- {ats: workday, slug: sanofi, name: Sanofi, host: sanofi.wd3.myworkdayjobs.com, site: SanofiCareers}
+- {ats: workday, slug: SimCorp, name: SimCorp, host: simcorp.wd3.myworkdayjobs.com, site: SimCorp_Jobs}
+- {ats: workday, slug: SSCTechnologies, name: SS&C Technologies}
+- {ats: workday, slug: StateStreet, name: "State Street", host: statestreet.wd1.myworkdayjobs.com, site: Global}
+- {ats: workday, slug: Synechron, name: Synechron, host: synechron.wd1.myworkdayjobs.com, site: SynechronCareers}
+- {ats: workday, slug: TaskUs, name: TaskUs, host: taskus.wd1.myworkdayjobs.com, site: Careers}
+- {ats: workday, slug: thermofisher, name: Thermo Fisher Scientific}
+- {ats: workday, slug: transunion, name: TransUnion, host: transunion.wd5.myworkdayjobs.com, site: transunion}
+- {ats: workday, slug: unisys, name: Unisys, host: unisys.wd5.myworkdayjobs.com, site: External}
+- {ats: workday, slug: Vanguard, name: Vanguard, host: vanguard.wd5.myworkdayjobs.com, site: vanguard_external}
+- {ats: workday, slug: WellsFargo, name: Wells Fargo}
+- {ats: workday, slug: Zoetis, name: Zoetis, host: zoetis.wd5.myworkdayjobs.com, site: Zoetis}
+
+- {ats: greenhouse, slug: null, name: Cohere Health, careers_url: "https://job-boards.greenhouse.io/coherehealth"}
+- {ats: greenhouse, slug: null, name: Coupang, careers_url: "https://www.coupang.jobs/en/jobs/"}
+- {ats: greenhouse, slug: null, name: Crunchyroll, careers_url: "https://www.crunchyroll.com/about/work/index.html"}
+- {ats: greenhouse, slug: null, name: Druva, careers_url: "https://www.druva.com/why-druva/explore/careers/jobs"}
+- {ats: greenhouse, slug: null, name: HighRadius, careers_url: "https://www.highradius.com/about/careers-list/"}
+- {ats: greenhouse, slug: null, name: InvoiceCloud, careers_url: "https://invoicecloud.net/careers"}
+- {ats: greenhouse, slug: null, name: Nasuni, careers_url: "https://job-boards.greenhouse.io/nasuni"}
+- {ats: greenhouse, slug: null, name: New Relic, careers_url: "https://job-boards.greenhouse.io/newrelic"}
+- {ats: greenhouse, slug: null, name: Observe.AI, careers_url: "https://job-boards.greenhouse.io/observeai"}
+- {ats: greenhouse, slug: null, name: Quantium, careers_url: "https://job-boards.greenhouse.io/quantium"}
+- {ats: greenhouse, slug: null, name: Redwood Software, careers_url: "https://job-boards.greenhouse.io/redwoodsoftware"}
+- {ats: greenhouse, slug: null, name: Schrödinger, careers_url: "https://job-boards.greenhouse.io/schrodinger"}
+- {ats: greenhouse, slug: null, name: SingleStore, careers_url: "https://job-boards.greenhouse.io/singlestore"}
+- {ats: greenhouse, slug: null, name: Skillsoft, careers_url: "https://job-boards.greenhouse.io/skillsoft"}
+- {ats: greenhouse, slug: null, name: StarRez, careers_url: "https://job-boards.greenhouse.io/starrez"}
+- {ats: greenhouse, slug: null, name: Truveta, careers_url: "https://job-boards.greenhouse.io/truveta"}
+- {ats: greenhouse, slug: null, name: Turing, careers_url: "https://job-boards.greenhouse.io/turing"}
+- {ats: greenhouse, slug: null, name: Veeam Software, careers_url: "https://job-boards.greenhouse.io/veeam"}
+- {ats: greenhouse, slug: null, name: WPP Production, careers_url: "https://job-boards.greenhouse.io/wpp"}
+- {ats: greenhouse, slug: null, name: Zenoti, careers_url: "https://job-boards.greenhouse.io/zenoti"}
+- {ats: greenhouse, slug: null, name: Zeta Global, careers_url: "https://job-boards.greenhouse.io/zetaglobal"}
+- {ats: greenhouse, slug: null, name: Zinnia, careers_url: "https://job-boards.greenhouse.io/zinnia"}
+- {ats: greenhouse, slug: null, name: Zscaler, careers_url: "https://job-boards.greenhouse.io/zscaler"}
+
+- {ats: lever, slug: null, name: Coupa, careers_url: "https://jobs.lever.co/coupa"}
+- {ats: lever, slug: null, name: Outreach, careers_url: "https://jobs.lever.co/outreach"}
+- {ats: lever, slug: null, name: PDI Technologies, careers_url: "https://jobs.lever.co/pdi"}
+- {ats: lever, slug: null, name: Sonatype, careers_url: "https://jobs.lever.co/sonatype"}
+- {ats: lever, slug: null, name: TTEC Digital, careers_url: "https://jobs.lever.co/ttecdigital"}
+- {ats: lever, slug: null, name: Turvo, careers_url: "https://jobs.lever.co/turvo"}
+- {ats: lever, slug: null, name: ValGenesis, careers_url: "https://jobs.lever.co/valgenesis"}
+- {ats: lever, slug: null, name: Zeta, careers_url: "https://jobs.lever.co/zeta"}
+
+- {ats: ashby, slug: null, name: Demandbase, careers_url: "https://jobs.ashbyhq.com/demandbase"}
+- {ats: ashby, slug: null, name: Notion, careers_url: "https://jobs.ashbyhq.com/notion"}
+
+- {ats: smartrecruiters, slug: acumatica, name: Acumatica}
+- {ats: smartrecruiters, slug: null, name: Experian, careers_url: "https://careers.smartrecruiters.com/experian"}
+- {ats: smartrecruiters, slug: null, name: Freshworks, careers_url: "https://careers.smartrecruiters.com/freshworks"}
+- {ats: smartrecruiters, slug: null, name: Jitterbit, careers_url: "https://careers.smartrecruiters.com/jitterbit"}
+- {ats: smartrecruiters, slug: null, name: Mattel, careers_url: "https://jobs.smartrecruiters.com/Mattel"}
+- {ats: smartrecruiters, slug: null, name: Mirantis, careers_url: "https://jobs.smartrecruiters.com/Mirantis"}
+- {ats: smartrecruiters, slug: null, name: Renesas Electronics, careers_url: "https://jobs.smartrecruiters.com/Renesas"}
+- {ats: smartrecruiters, slug: null, name: ServiceNow, careers_url: "https://jobs.smartrecruiters.com/ServiceNow"}
+- {ats: smartrecruiters, slug: null, name: Sutherland, careers_url: "https://jobs.smartrecruiters.com/Sutherland"}
+- {ats: smartrecruiters, slug: null, name: Wise, careers_url: "https://jobs.smartrecruiters.com/Wise"}
+
+- {ats: oracle_recruiting_cloud, slug: null, name: Bristlecone, careers_url: "https://iaagiz.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/bristlecone-careers"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Datavail, careers_url: "https://eifn.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/ExternalCareerSite"}
+- {ats: oracle_recruiting_cloud, slug: null, name: DTCC, careers_url: "https://ebxr.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Emerson, careers_url: "https://hdjq.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1"}
+- {ats: oracle_recruiting_cloud, slug: null, name: EXL, careers_url: "https://fa-ewjt-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Goldman Sachs, careers_url: "https://hdpc.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/LateralHiring"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Honeywell, careers_url: "https://icfcjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Aerospace"}
+- {ats: oracle_recruiting_cloud, slug: null, name: JPMorgan Chase, careers_url: "https://jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001"}
+- {ats: oracle_recruiting_cloud, slug: null, name: KPMG Global Services, careers_url: "https://ejgk.fa.em2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_3"}
+- {ats: oracle_recruiting_cloud, slug: null, name: KPMG India, careers_url: "https://ejgk.fa.em2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_3"}
+- {ats: oracle_recruiting_cloud, slug: null, name: Oracle, careers_url: "https://eeho.fa.us2.oraclecloud.com"}
+
+- {ats: successfactors, slug: null, name: Birlasoft, careers_url: "https://jobs.birlasoft.com/"}
+- {ats: successfactors, slug: null, name: Capgemini, careers_url: "https://careers.capgemini.com/"}
+- {ats: successfactors, slug: null, name: EY, careers_url: "https://careers.ey.com/"}
+- {ats: successfactors, slug: null, name: McDonald's, careers_url: "https://jobs.mcdonalds.com/"}
+- {ats: successfactors, slug: null, name: NetApp, careers_url: "https://jobs.netapp.com/"}
+- {ats: successfactors, slug: null, name: Reckitt, careers_url: "https://careers.reckitt.com/"}
+- {ats: successfactors, slug: null, name: Swiss Re, careers_url: "https://careers.swissre.com/"}
+- {ats: successfactors, slug: null, name: Wipro, careers_url: "https://careers.wipro.com/"}
+- {ats: successfactors, slug: null, name: ZF, careers_url: "https://jobs.zf.com/"}
+
+- {ats: eightfold, slug: null, name: Microsoft, careers_url: "https://apply.careers.microsoft.com/"}
+- {ats: own_platform, slug: null, name: Amazon, careers_url: "https://www.amazon.jobs/"}
+- {ats: own_platform, slug: null, name: Google, careers_url: "https://www.google.com/about/careers/applications/"}
+- {ats: own_platform, slug: null, name: Infosys, careers_url: "https://career.infosys.com/"}
+- {ats: own_platform, slug: null, name: Optum, careers_url: "https://careers.unitedhealthgroup.com/"}
+- {ats: own_platform, slug: null, name: UST, careers_url: "https://www.ust.com/"}
